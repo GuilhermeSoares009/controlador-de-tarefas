@@ -23,10 +23,9 @@ class TarefaController extends Controller
      */
     public function index()
     {
-        $id = auth()->user()->id;
-        $name = auth()->user()->name;
-        $email = auth()->user()->email;
-        return "ID: $id | Nome: $name | E-mail: $email";
+        $user_id = auth()->user()->id;
+        $tarefas = Tarefa::where('user_id',$user_id)->paginate(10);
+        return view('tarefas.index', ['tarefas' => $tarefas]);
     }
 
     /**
@@ -57,7 +56,7 @@ class TarefaController extends Controller
         ];
 
         $request->validate($regras,$respostas);
-        
+
         $dados = $request->all('tarefa','data_limite_conclusao');
         $dados['user_id'] = auth()->user()->id;
 
