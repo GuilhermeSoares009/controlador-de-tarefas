@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Mail;
 use App\Models\Tarefa;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Mail\NovaTarefaMail;
 
 class TarefaController extends Controller
 {
@@ -35,7 +36,7 @@ class TarefaController extends Controller
      */
     public function create()
     {
-        //
+        return view('tarefas.create');
     }
 
     /**
@@ -46,7 +47,20 @@ class TarefaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $regras = [
+            'tarefa' => 'required',
+            'data_limite_conclusao' => 'required'
+        ];
+
+        $respostas = [
+            'required' => 'O campo :attribute deve ser preenchido'
+        ];
+
+        $request->validate($regras,$respostas);
+        $destinatario = auth()->user()->email;
+        $tarefa = Tarefa::create($request->all());
+        Mail::to($destinatario)->send(new NovaTarefaMail($tarefa));
+        return redirect()->route('tarefa.show', ['tarefa' => $tarefa->id]);
     }
 
     /**
@@ -57,7 +71,7 @@ class TarefaController extends Controller
      */
     public function show(Tarefa $tarefa)
     {
-        //
+        return view('tarefas.show',['tarefa' => $tarefa]);
     }
 
     /**
