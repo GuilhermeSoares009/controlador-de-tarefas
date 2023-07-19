@@ -8,7 +8,7 @@ use App\Models\Tarefa;
 use Illuminate\Http\Request;
 use App\Mail\NovaTarefaMail;
 use Maatwebsite\Excel\Facades\Excel;
-
+use PDF;
 class TarefaController extends Controller
 {
 
@@ -137,5 +137,10 @@ class TarefaController extends Controller
         }
 
         return redirect()->route('tarefa.index');
+    }
+    
+    public function exportar() {
+        $pdf = PDF::loadView('tarefas.pdf',[]);
+        return $pdf->download('lista_de_tarefas.pdf');
     }
 }
