@@ -140,7 +140,10 @@ class TarefaController extends Controller
     }
     
     public function exportar() {
-        $pdf = PDF::loadView('tarefas.pdf',[]);
-        return $pdf->download('lista_de_tarefas.pdf');
+        $tarefas = auth()->user()->tarefas()->get();
+        $pdf = PDF::loadView('tarefas.pdf',['tarefas' => $tarefas]);
+        $pdf->setPaper('a4','landscape');
+        //return $pdf->download('lista_de_tarefas.pdf');
+        return $pdf->stream('lista_de_tarefas.pdf');
     }
 }
